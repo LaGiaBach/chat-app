@@ -6,11 +6,11 @@ import { AuthContext } from "../../Context/AuthProvider";
 
 const AddRoomModal = () => { 
   const {isAddRoomVisible, setIsAddRoomVisible} = useContext(AppContext);
-  const {users : {uid}} = useContext(AuthContext);
+  const {users : {uid , photoURL}} = useContext(AuthContext);
   const [form] = Form.useForm()
   const handleOk = () => {
     //add room to db
-    addDocument('rooms', {...form.getFieldsValue() , members:[uid]})
+    addDocument('rooms', {...form.getFieldsValue() , members:[uid] , membersAvatar:[photoURL]} )
 
     console.log({formData: form.getFieldsValue()})
     //close form after submit

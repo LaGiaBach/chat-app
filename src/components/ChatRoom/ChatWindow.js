@@ -93,7 +93,7 @@ const ChatWindow = () => {
       compareValue: selectRoom.id
     }),[selectRoom])
     const messages = useFileStore('messages' , condition)
-    console.log(messages)
+    // console.log(messages)
   return (
     <WraperStyled>
       {selectedRoomId ? (

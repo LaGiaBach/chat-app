@@ -8,7 +8,7 @@ const useFileStore = (collection,condition) => {
 
     useEffect(() => {
 
-    let collectionRef =  db.collection(collection).orderBy("createdAt")
+    let collectionRef =  db.collection(collection)
 
     if(condition) {
         if(!condition.compareValue || !condition.compareValue.length ){

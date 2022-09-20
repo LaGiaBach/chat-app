@@ -7,6 +7,25 @@ export const addDocument = (collection,data) =>{
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     })
 }
+// export const GetDocument = (collection) =>{
+//   const getData = db.collection(collection)
+//   // const documentArray = []
+//   const documentArray = getData.get().then(snapshots => {
+//       snapshots.forEach(snapshot => {
+//         // const dataOutput = snapshot.data()
+//         // documentArray.push(dataOutput)
+//         console.log(snapshot.data())
+//         return snapshot.data()
+//       })
+//   })
+
+
+//   return documentArray
+// }
+
+
+
+
 
 // tao keywords cho displayName, su dung cho search
 export const generateKeywords = (displayName) => {

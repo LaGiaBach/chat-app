@@ -23,6 +23,8 @@ const AppProvider = ({ children }) => {
 
   const selectRoom = useMemo(() => 
     rooms.find((room) => room.id === selectedRoomId) || {},[rooms,selectedRoomId])
+
+    
   const usersCondition = useMemo(() => {
     return {
       fieldName: "uid",
@@ -34,7 +36,7 @@ const AppProvider = ({ children }) => {
 
  
   const members = useFileStore("users", usersCondition);
-  console.log(members)
+  // console.log(members)
 
   return (
     <AppContext.Provider

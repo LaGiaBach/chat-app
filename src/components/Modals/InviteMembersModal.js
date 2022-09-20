@@ -28,6 +28,10 @@ const DebounceSelect = ({
     };
     return debounce(loadOptions, debounceTimeout);
   }, [debounceTimeout, fetchingOptions,curMembers]);
+
+
+
+
   useEffect(() => {
     return() => {
       setOptions([]);
@@ -42,7 +46,7 @@ const DebounceSelect = ({
       {...props}
     >
       {options.map((option) => (
-        <Select.Option key={option.value} value={option.value} title={option.label}>
+        <Select.Option key={option.value} value={option.value} title={option.label} avatar={option.photoURL}>
           <Avatar size="small" src={option.photoURL}>
             {option.photoURL ? "" : option.label?.charAt(0)?.toUpperCase()}
           </Avatar>
@@ -53,21 +57,27 @@ const DebounceSelect = ({
   );
 };
 
+
+
+
 const fetchUserList = async (search,curMembers) => {
   return db
     .collection("users")
     .where("keywords", "array-contains", search.toLowerCase())
-    .orderBy("displayName")
     .limit(20)
     .get()
     .then(snapshot => {
       return snapshot.docs.map(doc => ({
         label:doc?.data()?.displayName,
-        value: doc?.data()?.uid,
+        value: doc?.data()?.uid ,
         photoURL: doc?.data()?.photoURL
       })).filter((opt) => !curMembers.includes(opt.value));
     });
 };
+
+
+
+
 const InviteMembersModal = () => {
   const { isInviteMemberVisible, setIsInviteMemberVisible, selectedRoomId,selectRoom } =
     useContext(AppContext);
@@ -82,6 +92,7 @@ const InviteMembersModal = () => {
     
     roomRef.update({
       members:[...selectRoom.members , ...value.map(val => val.value)],
+      membersAvatar:[...selectRoom.membersAvatar , ...value.map(val => val.label[0].props.src)],
     })
 
     setIsInviteMemberVisible(false);
