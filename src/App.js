@@ -7,6 +7,7 @@ import AuthProvider from './Context/AuthProvider';
 import AppProvider from './Context/AppProvider';
 import AddRoomModal from './components/Modals/AddRoomModal';
 import InviteMembersModal from './components/Modals/InviteMembersModal';
+import EditProfile from './components/Profile/EditProfile';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login/>}/>
               <Route path="/" element={<ChatRoom/>}/>
+              <Route path="/editprofile" element={<EditProfile/>}/>
             </Routes>
             <AddRoomModal/>
             <InviteMembersModal/>

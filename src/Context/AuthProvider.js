@@ -9,6 +9,8 @@ const AuthProvider = ({children}) => {
     const [users , setUsers] = useState({})
     const navigate = useNavigate() 
     const[isLoading,setIsLoading] = useState(true)
+    const [editProfile,setEditProfile] = useState(false)
+
 
     useEffect(() => {
        const unsubscribed = auth.onAuthStateChanged((user) =>{
@@ -23,16 +25,16 @@ const AuthProvider = ({children}) => {
             }
             setIsLoading(false)
             navigate('/login')
-           
+            
             
           });
           // clean up function
           return () => {
             unsubscribed()
           }
-    },[navigate])
+    },[navigate,editProfile])
   return (
-    <AuthContext.Provider value={{users}}>
+    <AuthContext.Provider value={{users, setEditProfile,editProfile}}>
         {isLoading? <Spin style={{ display:"flex" , justifyContent:"center", alignItems:"center" , minHeight:"100vh"}}/> :children}
     </AuthContext.Provider>
   )

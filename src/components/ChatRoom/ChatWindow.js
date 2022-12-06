@@ -4,10 +4,12 @@ import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { AppContext } from "../../Context/AppProvider";
 import Message from "./Message";
-import {addDocument} from "../../firebase/services"
+import { addDocument } from "../../firebase/services";
 import { AuthContext } from "../../Context/AuthProvider";
 import useFileStore from "../../hooks/useFileStore";
 import { useMemo } from "react";
+import EditProfile from "../Profile/EditProfile";
+
 const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
@@ -66,101 +68,112 @@ const MessageListStyled = styled.div`
 const ChatWindow = () => {
   const { selectRoom, members, setIsInviteMemberVisible, selectedRoomId } =
     useContext(AppContext);
-    const {users:{ 
+  const {
+    users: { uid, photoURL, displayName },
+    editProfile,
+  } = useContext(AuthContext);
+  const [inputValue, setInputValue] = useState("");
+  const [form] = Form.useForm();
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+  const handleSubmit = () => {
+    addDocument("messages", {
+      text: inputValue,
       uid,
       photoURL,
-      displayName
-     }} = useContext(AuthContext)
-    const [inputValue,setInputValue] = useState('')
-    const[form] = Form.useForm()
-
-    const handleInputChange = (e) =>{
-      setInputValue(e.target.value);
-    }
-    const handleSubmit = () =>{
-      addDocument('messages', { 
-        text: inputValue, 
-        uid,
-        photoURL,
-        roomId:selectRoom.id,
-        displayName,
-      })
-      form.resetFields(['messages'])
-    }
-    const condition = useMemo(()=>({
-      fieldName:"roomId",
-      operator:"==",
-      compareValue: selectRoom.id
-    }),[selectRoom])
-    const messages = useFileStore('messages' , condition)
-    // console.log(messages)
+      roomId: selectRoom.id,
+      displayName,
+    });
+    form.resetFields(["messages"]);
+  };
+  const condition = useMemo(
+    () => ({
+      fieldName: "roomId",
+      operator: "==",
+      compareValue: selectRoom.id,
+    }),
+    [selectRoom]
+  );
+  const messages = useFileStore("messages", condition);
+  const RoomSection = () => {
+    return (
+      <>
+        {selectedRoomId ? (
+          <>
+            <HeaderStyled>
+              <div className="header__info">
+                <p className="header__title">{selectRoom?.name}</p>
+                <span className="header__description">
+                  {selectRoom?.description}
+                </span>
+              </div>
+              <ButtonGroupStyled>
+                <Button
+                  icon={<UserAddOutlined />}
+                  type="text"
+                  onClick={() => setIsInviteMemberVisible(true)}
+                >
+                  Invite
+                </Button>
+                <Avatar.Group size="small" maxCount={2}>
+                  {members.map((member) => (
+                    <Tooltip title={member.displayName} key={member.id}>
+                      <Avatar src={member.photoURL}>
+                        {member.photoURL
+                          ? ""
+                          : member.displayName?.charAt(0)?.toUpperCase()}
+                      </Avatar>
+                    </Tooltip>
+                  ))}
+                </Avatar.Group>
+              </ButtonGroupStyled>
+            </HeaderStyled>
+            <ContentStyled>
+              <MessageListStyled>
+                {messages.map((message) => (
+                  <Message
+                    key={message.id}
+                    text={message.text}
+                    photoURL={message.photoURL}
+                    displayName={message.displayName}
+                    createdAt={message.createdAt}
+                  />
+                ))}
+              </MessageListStyled>
+              <FormStyled form={form}>
+                <Form.Item name="messages">
+                  <Input
+                    onChange={handleInputChange}
+                    onPressEnter={handleSubmit}
+                    placeholder="Enter your message"
+                    bordered={false}
+                    autoComplete="off"
+                  />
+                </Form.Item>
+                <Button type="primary" onClick={handleSubmit}>
+                  Send
+                </Button>
+              </FormStyled>
+            </ContentStyled>
+          </>
+        ) : (
+          <Alert
+            message="Select a room chat"
+            type="info"
+            showIcon
+            style={{ margin: 5 }}
+            closable
+          />
+        )}
+      </>
+    );
+  };
+  // console.log(messages)
   return (
     <WraperStyled>
-      {selectedRoomId ? (
-        <>
-          <HeaderStyled>
-            <div className="header__info">
-              <p className="header__title">{selectRoom?.name}</p>
-              <span className="header__description">
-                {selectRoom?.description}
-              </span>
-            </div>
-            <ButtonGroupStyled>
-              <Button
-                icon={<UserAddOutlined />}
-                type="text"
-                onClick={() => setIsInviteMemberVisible(true)}
-              >
-                Invite
-              </Button>
-              <Avatar.Group size="small" maxCount={2}>
-                {members.map((member) => (
-                  <Tooltip title={member.displayName} key={member.id}>
-                    <Avatar src={member.photoURL}>
-                      {member.photoURL
-                        ? ""
-                        : member.displayName?.charAt(0)?.toUpperCase()}
-                    </Avatar>
-                  </Tooltip>
-                ))}
-              </Avatar.Group>
-            </ButtonGroupStyled>
-          </HeaderStyled>
-          <ContentStyled>
-            <MessageListStyled>
-            {messages.map((message) => 
-            <Message
-              key={message.id}
-              text={message.text}
-              photoURL={message.photoURL}
-              displayName={message.displayName}
-              createdAt={message.createdAt}
-            />)}
-             
-            </MessageListStyled>
-            <FormStyled form={form}>
-              <Form.Item name="messages">
-                <Input
-                  onChange={handleInputChange}
-                  onPressEnter={handleSubmit}
-                  placeholder="Enter your message"
-                  bordered={false}
-                  autoComplete="off"
-                />
-              </Form.Item>
-              <Button type="primary" onClick={handleSubmit}>Send</Button>
-            </FormStyled>
-          </ContentStyled>
-        </>
-      ) : (
-        <Alert
-          message="Select a room chat"
-          type="info"
-          showIcon
-          style={{ margin: 5 }}
-          closable
-        />
-      )}
+      {editProfile ? <EditProfile /> : <RoomSection />}
     </WraperStyled>
   );
 };

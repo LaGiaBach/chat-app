@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { PlusSquareOutlined } from "@ant-design/icons";
 import { AppContext } from "../../Context/AppProvider";
 // import { GetDocument } from "../../firebase/services";
-// import { AuthContext } from '../../Context/AuthProvider';
+import { AuthContext } from '../../Context/AuthProvider';
 
 const { Panel } = Collapse;
 
@@ -56,6 +56,7 @@ const RoomSearchWrapper = styled.div`
   justify-content:space-between
 `
 const RoomList = () => {
+  const {setEditProfile} = useContext(AuthContext)
   const { rooms, setIsAddRoomVisible, setSelectedRoomId ,selectedRoomId } =
     useContext(AppContext);
 
@@ -94,6 +95,7 @@ const RoomList = () => {
         {roomList?.map((room) => (
           <RoomListWrapper  key={room.id} style={{background: selectedRoomId === room.id ? "#ccc" : ''}}  onClick={() => {
             setSelectedRoomId(room.id)
+            setEditProfile(false)
             }}>
             <Avatar.Group size="small" maxCount={1}>
               {room?.membersAvatar?.map((avatar) => (

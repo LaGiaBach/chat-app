@@ -8,7 +8,9 @@ const ChatRoom = () => {
     <div>
       <Row>
         <Col span={6}><Sidebar/></Col>
-        <Col span={18}><ChatWindow/></Col>
+        <Col span={18}>
+          <ChatWindow/>
+          </Col>
       </Row>
     </div>
   )
